@@ -13,6 +13,7 @@ In this, the user has to input the api and refresh token from its Atomberg Home 
    ```
    git clone https://github.com/UTKARSHJHA-2005/ATOMBERG-WEB.git<br/>
    ```
+   <br/>
 2. Install the dependencies<br/>
    ```
    cd ATOMBERG-WEB
