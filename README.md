@@ -27,3 +27,8 @@ In this, the user has to input the api and refresh token from its Atomberg Home 
    <pre>
    node ./src/index.js
    </pre>
+   <br/>
+4. The Vite server will start at localhost:5173 and<br/>
+   index.js one will show<br/>
+   WS server at ws://localhost:9001 <br/>
+   Listening for UDP packets on port 5625
