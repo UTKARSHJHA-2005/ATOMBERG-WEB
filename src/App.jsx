@@ -234,17 +234,13 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-900 ">
       <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
         <div className="mb-8">
           <img src="https://images.yourstory.com/cs/2/e35953e0c10a11eeaef14be6ff40ae87/Imagey4c9-1710955199100.jpg?mode=crop&crop=faces&ar=2%3A1&format=auto&w=1920&q=75" alt="Atomberg Logo" className="h-16 mb-4" />
           <h1 className="text-4xl font-bold text-white mb-2">Atomberg Fan Controller</h1>
           <p className="text-blue-200">Smart home control interface</p>
         </div>
-
-        {/* Configuration Card */}
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-6 border border-white/20">
           <h2 className="text-xl font-semibold text-white mb-4">API Configuration</h2>
-
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-blue-200 mb-2">API Key (x-api-key)</label>
@@ -256,7 +252,6 @@ export default function App() {
                 placeholder="Enter your API key"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-blue-200 mb-2">Refresh Token</label>
               <input
@@ -267,12 +262,10 @@ export default function App() {
                 placeholder="Enter your refresh token"
               />
             </div>
-
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => getAccessToken()}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-              >
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                 Get Access Token
               </button>
               <button
@@ -289,33 +282,25 @@ export default function App() {
                   localStorage.removeItem("atomberg_access_token");
                   setAccessToken("");
                 }}
-                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
-              >
+                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
                 Clear
               </button>
             </div>
           </div>
         </div>
-
-        {/* Error Display */}
         {error && (
           <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-6">
             <p className="text-red-200">{error}</p>
           </div>
         )}
-
-        {/* Loading Indicator */}
         {loading && (
           <div className="bg-blue-500/20 border border-blue-500/50 rounded-lg p-4 mb-6">
             <p className="text-blue-200">Loading...</p>
           </div>
         )}
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Devices List */}
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
             <h2 className="text-2xl font-semibold text-white mb-4">Devices</h2>
-
             {devices.length === 0 ? (
               <div className="text-center py-8 text-gray-400">
                 No devices. Click Fetch Devices.
@@ -370,11 +355,8 @@ export default function App() {
               </div>
             )}
           </div>
-
-          {/* Selected Device Control */}
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
             <h2 className="text-2xl font-semibold text-white mb-4">Device Control</h2>
-
             {!selectedDevice ? (
               <div className="text-center py-8 text-gray-400">
                 No device selected
@@ -385,7 +367,6 @@ export default function App() {
                   <h3 className="text-xl font-semibold text-white">{selectedDevice.device_name}</h3>
                   <p className="text-sm text-gray-400">{selectedDevice.device_id}</p>
                 </div>
-
                 <div className="flex gap-2">
                   <button
                     onClick={() => getDeviceState(selectedDevice.device_id)}
@@ -400,7 +381,6 @@ export default function App() {
                     Toggle Power
                   </button>
                 </div>
-
                 <div>
                   <h4 className="text-sm font-medium text-blue-200 mb-2">LED Control</h4>
                   <div className="flex gap-2">
@@ -418,7 +398,6 @@ export default function App() {
                     </button>
                   </div>
                 </div>
-
                 <div>
                   <h4 className="text-sm font-medium text-blue-200 mb-2">Speed Control</h4>
                   <div className="grid grid-cols-6 gap-2">
@@ -436,7 +415,6 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-
                 <div>
                   <h4 className="text-sm font-medium text-blue-200 mb-2">Timer</h4>
                   <div className="grid grid-cols-5 gap-2">
@@ -457,7 +435,6 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-
                 <div>
                   <h4 className="text-sm font-medium text-blue-200 mb-2">Brightness (10-100)</h4>
                   <div className="grid grid-cols-5 gap-2">
@@ -472,11 +449,9 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-
                 {/* Device State Display */}
                 <div className="pt-4 border-t border-white/10">
                   <h4 className="text-lg font-semibold text-white mb-3">Device State</h4>
-
                   {!deviceState ? (
                     <div className="text-center py-4 text-gray-400 text-sm">
                       No state loaded. Click Get State or wait for UDP update.
@@ -515,7 +490,6 @@ export default function App() {
                           <p className="text-lg font-semibold text-orange-400 capitalize">{deviceState.decoded.color}</p>
                         </div>
                       </div>
-
                       <details className="bg-white/5 rounded-lg p-3">
                         <summary className="text-sm font-medium text-blue-200 cursor-pointer">Raw Data</summary>
                         <pre className="mt-2 text-xs text-gray-300 overflow-x-auto">
