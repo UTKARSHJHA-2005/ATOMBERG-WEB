@@ -10,20 +10,20 @@ In this, the user has to input the api and refresh token from its Atomberg Home 
 <br/>
 <strong>How to run the app</strong> <br/>
 1. Clone the repo<br/>
-   ```
+   <pre>
    git clone https://github.com/UTKARSHJHA-2005/ATOMBERG-WEB.git<br/>
-   ```
+   </pre>
    <br/>
 2. Install the dependencies<br/>
-   ```
+   <pre>
    cd ATOMBERG-WEB
    npm install
-   ```
+   </pre>
 3. Run the app (for Vite)<br/>
-   ```
+   <pre>
    npm run dev
-   ```
+   </pre>
    Run the app (for node)<br/>
-   ```
+   <pre>
    node ./src/index.js
-   ```
+   </pre>
