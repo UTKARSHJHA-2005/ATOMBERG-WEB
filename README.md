@@ -32,3 +32,4 @@ In this, the user has to input the api and refresh token from its Atomberg Home 
    index.js one will show<br/>
    WS server at ws://localhost:9001 <br/>
    Listening for UDP packets on port 5625
+SnPGaAg9ftdAhoNAwgflcZXqYXDnxM083wDbxqpY
