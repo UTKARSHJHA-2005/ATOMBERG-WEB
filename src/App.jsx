@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 
-const API_BASE = "https://api.developer.atomberg-iot.com";
+const API_BASE = "http://localhost:3001/api";
 const DEFAULT_WS = "ws://localhost:9001";
 
 function decodeStateValue(value) {
@@ -50,25 +50,39 @@ export default function App() {
   async function getAccessToken() {
     setError("");
     setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/v1/get_access_token`, {
-        method: "POST",
-        headers: {
-          "x-api-key": apiKey,
-          Authorization: refreshToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.message || `Token request failed: ${res.status}`);
 
-      const token = json.access_token || json.accessToken || json.accessTokenString || "";
-      if (!token) throw new Error("No access token returned by API. See response in console.");
+    try {
+      const res = await fetch(
+        "https://api.developer.atomberg-iot.com/v1/get_access_token",
+        {
+          method: "GET",
+          headers: {
+            "x-api-key": apiKey,
+            "Authorization": `Bearer ${refreshToken}`,
+          },
+        }
+      );
+
+      const json = await res.json();
+      console.log("get_access_token response:", json);
+
+      if (!res.ok) {
+        throw new Error(json.message || `Token request failed: ${res.status}`);
+      }
+
+      // ✅ FIX HERE
+      const token = json.message?.access_token;
+      console.log("TOKEN FIELD TEST:", json.message?.access_token);
+
+      if (!token) {
+        throw new Error("No access token returned by API");
+      }
+
       setAccessToken(token);
       localStorage.setItem("atomberg_access_token", token);
       setLoading(false);
       return token;
+
     } catch (err) {
       console.error("getAccessToken:", err);
       setError(err.message || String(err));
@@ -79,30 +93,37 @@ export default function App() {
 
   function authHeaders(useAccess = true) {
     const headers = { "x-api-key": apiKey };
-    if (useAccess && accessToken) headers["Authorization"] = accessToken;
+    if (useAccess && accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
     return headers;
   }
 
   async function fetchDevices() {
     setError("");
     setLoading(true);
+
     try {
-      if (!accessToken) await getAccessToken();
-      const res = await fetch(`${API_BASE}/v1/get_list_of_devices`, {
-        method: "GET",
-        headers: authHeaders(true),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.message || `Get devices failed: ${res.status}`);
-      const list = json.devices || json || [];
-      const normalized = (Array.isArray(list) ? list : []).map((d) => ({
-        device_id: d.device_id || d.id || d.uuid || d._id,
-        device_name: d.device_name || d.name || d.alias || `Fan ${d.device_id || d.id}`,
-        raw: d,
-      }));
-      setDevices(normalized);
+      const token = accessToken || await getAccessToken();
+
+      const res = await fetch(
+        "https://api.developer.atomberg-iot.com/v1/get_list_of_devices",
+        {
+          headers: {
+            "x-api-key": apiKey,
+            "Authorization": `Bearer ${token}`, // ✅ FIX
+          },
+        }
+      );
+
+      const json = await res.json();
+      console.log("devices response:", json);
+
+      if (!res.ok) {
+        throw new Error(json.message || `Get devices failed: ${res.status}`);
+      }
+
+      setDevices(json.message?.devices_list || []);
       setLoading(false);
-      return normalized;
+
     } catch (err) {
       console.error("fetchDevices:", err);
       setError(err.message || String(err));
@@ -110,15 +131,22 @@ export default function App() {
     }
   }
 
+
   async function getDeviceState(deviceId) {
     setError("");
     setLoading(true);
     try {
       if (!accessToken) await getAccessToken();
-      const res = await fetch(`${API_BASE}/v1/get_device_state?device_id=${encodeURIComponent(deviceId)}`, {
-        method: "GET",
-        headers: authHeaders(true),
-      });
+      const res = await fetch(
+        `${API_BASE}/device_state?device_id=${encodeURIComponent(deviceId)}`,
+        {
+          method: "GET",
+          headers: {
+            "x-api-key": apiKey,
+            "accessToken": accessToken,
+          },
+        }
+      );
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.message || `Get device state failed: ${res.status}`);
 
@@ -142,17 +170,17 @@ export default function App() {
     setLoading(true);
     try {
       if (!accessToken) await getAccessToken();
-      const body = {
-        device_id: deviceId,
-        command: commandObj,
-      };
-      const res = await fetch(`${API_BASE}/v1/send_command`, {
+      const res = await fetch(`${API_BASE}/send_command`, {
         method: "POST",
         headers: {
-          ...authHeaders(true),
           "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "Authorization": `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          device_id: deviceId,
+          command: commandObj,
+        }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.message || `Send command failed: ${res.status}`);
@@ -311,43 +339,43 @@ export default function App() {
                   <div
                     key={d.device_id}
                     className={`p-4 rounded-xl border transition-all ${selectedDevice?.device_id === d.device_id
-                      ? 'bg-blue-500/30 border-blue-400'
-                      : 'bg-white/5 border-white/10 hover:bg-white/10'
+                      ? "bg-blue-500/30 border-blue-400"
+                      : "bg-white/5 border-white/10 hover:bg-white/10"
                       }`}
                   >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-white text-lg">{d.device_name}</h3>
-                        <p className="text-sm text-gray-400">{d.device_id}</p>
-                        {d.lastSeen && (
-                          <p className="text-xs text-green-400 mt-1">
-                            Last UDP: {new Date(d.lastSeen).toLocaleTimeString()}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                    <h3 className="font-semibold text-white text-lg">{d.name}</h3>
 
-                    <div className="flex gap-2">
+                    <p className="text-sm text-gray-300">Room: {d.room}</p>
+                    <p className="text-sm text-gray-300">Model: {d.model}</p>
+                    <p className="text-sm text-gray-300">Series: {d.series}</p>
+                    <p className="text-sm text-gray-300">Color: {d.color}</p>
+
+                    <p className="text-xs text-gray-400 mt-1">
+                      Device ID: {d.device_id}
+                    </p>
+
+                    {d.metadata?.ssid && (
+                      <p className="text-xs text-blue-300 mt-1">
+                        WiFi SSID: {d.metadata.ssid}
+                      </p>
+                    )}
+
+                    <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => {
                           setSelectedDevice(d);
                           getDeviceState(d.device_id);
                         }}
-                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg"
                       >
                         Inspect
                       </button>
+
                       <button
                         onClick={() => uiTogglePower(d)}
-                        className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
+                        className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg"
                       >
                         Toggle Power
-                      </button>
-                      <button
-                        onClick={() => setSelectedDevice(d)}
-                        className="px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors"
-                      >
-                        Select
                       </button>
                     </div>
                   </div>

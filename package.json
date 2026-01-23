@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "ws": "^8.18.3"
@@ -31,5 +34,18 @@
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"
-  }
+  },
+  "description": "This is the website created for the assignment provided by the Atomberg.<br/>\r In this, the user has to input the api and refresh token from its Atomberg Home App.<br/>\r <br/>\r <strong>Prerequisites</strong><br/>\r 1. Node.js <br/>\r 2. Vite <br/>\r 3. Tailwind CSS <br/>\r 4. Atomberg Home App <br/>\r <br/>\r <strong>How to run the app</strong> <br/>\r 1. Clone the repo<br/>\r    <pre>\r    git clone https://github.com/UTKARSHJHA-2005/ATOMBERG-WEB.git<br/>\r    </pre>\r    <br/>\r 2. Install the dependencies<br/>\r    <pre>\r    cd ATOMBERG-WEB\r    npm install\r    </pre>\r 3. Run the app (for Vite)<br/>\r    <pre>\r    npm run dev\r    </pre>\r    Run the app (for node)<br/>\r    <pre>\r    node ./src/index.js\r    </pre>\r    <br/>\r 4. The Vite server will start at localhost:5173 and<br/>\r    index.js one will show<br/>\r    WS server at ws://localhost:9001 <br/>\r    Listening for UDP packets on port 5625\r SnPGaAg9ftdAhoNAwgflcZXqYXDnxM083wDbxqpY",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UTKARSHJHA-2005/ATOMBERG-WEB.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UTKARSHJHA-2005/ATOMBERG-WEB/issues"
+  },
+  "homepage": "https://github.com/UTKARSHJHA-2005/ATOMBERG-WEB#readme"
 }
