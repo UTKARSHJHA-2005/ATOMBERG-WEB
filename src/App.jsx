@@ -102,20 +102,39 @@ export default function App() {
     setLoading(true);
 
     try {
-      const token = accessToken || await getAccessToken();
+      let token = accessToken;
 
-      const res = await fetch(
+      if (!token) {
+        token = await getAccessToken();
+      }
+
+      let res = await fetch(
         "https://api.developer.atomberg-iot.com/v1/get_list_of_devices",
         {
           headers: {
             "x-api-key": apiKey,
-            "Authorization": `Bearer ${token}`, // ✅ FIX
+            "Authorization": `Bearer ${token}`,
           },
         }
       );
 
+      // 🔥 If token expired → refresh automatically
+      if (res.status === 401) {
+        console.log("Access token expired. Refreshing...");
+        token = await getAccessToken();
+
+        res = await fetch(
+          "https://api.developer.atomberg-iot.com/v1/get_list_of_devices",
+          {
+            headers: {
+              "x-api-key": apiKey,
+              "Authorization": `Bearer ${token}`,
+            },
+          }
+        );
+      }
+
       const json = await res.json();
-      console.log("devices response:", json);
 
       if (!res.ok) {
         throw new Error(json.message || `Get devices failed: ${res.status}`);
@@ -130,6 +149,7 @@ export default function App() {
       setLoading(false);
     }
   }
+
 
 
   async function getDeviceState(deviceId) {
